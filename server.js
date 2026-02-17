@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -14,6 +14,8 @@ app.use("/uploads", express.static("uploads"));
 /* ---------- FILE SETUP ---------- */
 const dataFile = "products.json";
 if (!fs.existsSync(dataFile)) fs.writeFileSync(dataFile, "[]");
+if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
+
 
 /* ---------- IMAGE UPLOAD ---------- */
 const storage = multer.diskStorage({
@@ -50,5 +52,5 @@ app.get("/products", (req, res) => {
 
 /* ---------- START SERVER ---------- */
 app.listen(PORT, () =>
-  console.log(`Server running → http://localhost:${PORT}`)
+  console.log(`Server running on ${PORT}`)
 );
