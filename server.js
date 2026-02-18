@@ -28,21 +28,31 @@ const upload = multer({ storage });
 
 /* ---------- ADD PRODUCT ---------- */
 app.post("/add-product", upload.single("image"), (req, res) => {
-  const products = JSON.parse(fs.readFileSync(dataFile));
+  try {
+    const products = JSON.parse(fs.readFileSync(dataFile));
 
-  const product = {
-    id: Date.now(),
-    name: req.body.name,
-    price: req.body.price,
-    category: req.body.category,
-    image: `/uploads/${req.file.filename}`
-  };
+    if (!req.body.name || !req.body.price || !req.body.category) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-  products.push(product);
-  fs.writeFileSync(dataFile, JSON.stringify(products, null, 2));
+    const product = {
+      id: Date.now(),
+      name: req.body.name,
+      price: req.body.price,
+      category: req.body.category,
+      image: req.file ? `/uploads/${req.file.filename}` : null
+    };
 
-  res.json({ message: "Product saved" });
+    products.push(product);
+    fs.writeFileSync(dataFile, JSON.stringify(products, null, 2));
+
+    res.json({ message: "Product saved", product });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to save product" });
+  }
 });
+
 
 /* ---------- GET PRODUCTS ---------- */
 app.get("/products", (req, res) => {
