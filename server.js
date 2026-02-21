@@ -12,11 +12,12 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://macsoftwares51-creator.github.io");
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
 
-app.options("*", (req, res) => {
-  res.sendStatus(200);
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
 });
 
 app.use(express.json());
@@ -47,7 +48,6 @@ const upload = multer({ storage });
 
 /* ---------- ADD PRODUCT ---------- */
 app.post("/add-product", upload.single("image"), (req, res) => {
-
   try {
 
     const products = JSON.parse(fs.readFileSync(dataFile));
@@ -79,7 +79,6 @@ app.post("/add-product", upload.single("image"), (req, res) => {
     });
 
   }
-
 });
 
 /* ---------- GET PRODUCTS ---------- */
