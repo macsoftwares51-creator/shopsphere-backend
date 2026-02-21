@@ -7,9 +7,9 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-/* ---------- CORS FIX ---------- */
+/* ---------- CORS ---------- */
 app.use(cors({
-  origin: "*",
+  origin: "https://macsoftwares51-creator.github.io",
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"]
 }));
@@ -32,10 +32,10 @@ if (!fs.existsSync("uploads")) {
 
 /* ---------- IMAGE UPLOAD ---------- */
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: (req, file, cb) => {
     cb(null, "uploads/");
   },
-  filename: function(req, file, cb) {
+  filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
   }
 });
@@ -47,9 +47,7 @@ app.post("/add-product", upload.single("image"), (req, res) => {
   try {
 
     if (!req.body.name || !req.body.price || !req.body.category) {
-      return res.status(400).json({
-        message: "All fields are required"
-      });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     const products = JSON.parse(fs.readFileSync(dataFile));
@@ -64,10 +62,7 @@ app.post("/add-product", upload.single("image"), (req, res) => {
 
     products.push(product);
 
-    fs.writeFileSync(
-      dataFile,
-      JSON.stringify(products, null, 2)
-    );
+    fs.writeFileSync(dataFile, JSON.stringify(products, null, 2));
 
     res.json({
       message: "Product saved",
@@ -75,38 +70,22 @@ app.post("/add-product", upload.single("image"), (req, res) => {
     });
 
   } catch (err) {
-
-    console.error("ADD PRODUCT ERROR:", err);
-
-    res.status(500).json({
-      message: "Failed to save product"
-    });
-
+    console.error(err);
+    res.status(500).json({ message: "Failed to save product" });
   }
 });
 
 /* ---------- GET PRODUCTS ---------- */
 app.get("/products", (req, res) => {
   try {
-
-    const products = JSON.parse(
-      fs.readFileSync(dataFile)
-    );
-
+    const products = JSON.parse(fs.readFileSync(dataFile));
     res.json(products);
-
   } catch (err) {
-
-    console.error("GET PRODUCTS ERROR:", err);
-
-    res.status(500).json({
-      message: "Failed to load products"
-    });
-
+    res.status(500).json({ message: "Failed to load products" });
   }
 });
 
-/* ---------- SERVER START ---------- */
+/* ---------- START SERVER ---------- */
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
