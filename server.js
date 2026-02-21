@@ -8,13 +8,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 /* ---------- CORS ---------- */
-app.use(cors({
-  origin: "https://macsoftwares51-creator.github.io",
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"]
-}));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://macsoftwares51-creator.github.io");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 
-app.options("*", cors());
+app.options("*", (req, res) => {
+  res.sendStatus(200);
+});
 
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
@@ -44,11 +47,8 @@ const upload = multer({ storage });
 
 /* ---------- ADD PRODUCT ---------- */
 app.post("/add-product", upload.single("image"), (req, res) => {
-  try {
 
-    if (!req.body.name || !req.body.price || !req.body.category) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
+  try {
 
     const products = JSON.parse(fs.readFileSync(dataFile));
 
@@ -65,27 +65,33 @@ app.post("/add-product", upload.single("image"), (req, res) => {
     fs.writeFileSync(dataFile, JSON.stringify(products, null, 2));
 
     res.json({
-      message: "Product saved",
+      success: true,
       product
     });
 
   } catch (err) {
+
     console.error(err);
-    res.status(500).json({ message: "Failed to save product" });
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to save product"
+    });
+
   }
+
 });
 
 /* ---------- GET PRODUCTS ---------- */
 app.get("/products", (req, res) => {
-  try {
-    const products = JSON.parse(fs.readFileSync(dataFile));
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to load products" });
-  }
+
+  const products = JSON.parse(fs.readFileSync(dataFile));
+
+  res.json(products);
+
 });
 
 /* ---------- START SERVER ---------- */
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log("Server running on port", PORT);
 });
