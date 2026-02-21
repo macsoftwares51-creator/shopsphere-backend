@@ -7,18 +7,20 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-/* ---------- CORS ---------- */
-const corsOptions = {
+/* ---------- CORS FIX ---------- */
+app.use(cors({
   origin: "*",
-  methods: ["GET", "POST"]
-};
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
+}));
 
-app.use(cors(corsOptions));
+app.options("*", cors());
+
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
 /* ---------- FILE SETUP ---------- */
-const dataFile = "products.json";
+const dataFile = path.join(__dirname, "products.json");
 
 if (!fs.existsSync(dataFile)) {
   fs.writeFileSync(dataFile, "[]");
@@ -30,10 +32,10 @@ if (!fs.existsSync("uploads")) {
 
 /* ---------- IMAGE UPLOAD ---------- */
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: function(req, file, cb) {
     cb(null, "uploads/");
   },
-  filename: (req, file, cb) => {
+  filename: function(req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
   }
 });
@@ -44,13 +46,13 @@ const upload = multer({ storage });
 app.post("/add-product", upload.single("image"), (req, res) => {
   try {
 
-    const products = JSON.parse(fs.readFileSync(dataFile));
-
     if (!req.body.name || !req.body.price || !req.body.category) {
       return res.status(400).json({
         message: "All fields are required"
       });
     }
+
+    const products = JSON.parse(fs.readFileSync(dataFile));
 
     const product = {
       id: Date.now(),
@@ -73,11 +75,13 @@ app.post("/add-product", upload.single("image"), (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
+
+    console.error("ADD PRODUCT ERROR:", err);
 
     res.status(500).json({
       message: "Failed to save product"
     });
+
   }
 });
 
@@ -93,6 +97,8 @@ app.get("/products", (req, res) => {
 
   } catch (err) {
 
+    console.error("GET PRODUCTS ERROR:", err);
+
     res.status(500).json({
       message: "Failed to load products"
     });
@@ -100,7 +106,7 @@ app.get("/products", (req, res) => {
   }
 });
 
-/* ---------- START SERVER ---------- */
+/* ---------- SERVER START ---------- */
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
