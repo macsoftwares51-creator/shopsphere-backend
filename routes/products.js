@@ -19,7 +19,10 @@ router.post("/", async (req,res)=>{
   try{
     const product = new Product(req.body);
     await product.save();
-    res.json(product);
+   res.json({
+  message: "Product added",
+  product: product
+});
   }catch(err){
     res.status(500).json({error: err.message});
   }
