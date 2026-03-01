@@ -10,23 +10,29 @@ const adminRoutes = require("./routes/admin");
 
 const app = express();
 
+/* ---------- CONNECT DATABASE ---------- */
 connectDB();
 
+/* ---------- MIDDLEWARE ---------- */
 app.use(cors({
-origin:"https://macsoftwares51-creator.github.io"
+  origin: "https://macsoftwares51-creator.github.io",
+  methods: ["GET","POST","PUT","DELETE"],
+  credentials: true
 }));
 
 app.use(express.json());
 
-app.use("/products",productRoutes);
-app.use("/admin",adminRoutes);
+/* ---------- ROUTES ---------- */
+app.use("/products", productRoutes);
+app.use("/admin", adminRoutes);
 
-app.get("/",(req,res)=>{
-res.send("ShopSphere API running");
+app.get("/", (req, res) => {
+  res.send("ShopSphere API running");
 });
 
-const PORT = process.env.PORT || 3000;
+/* ---------- SERVER ---------- */
+const PORT = process.env.PORT || 10000;
 
-app.listen(PORT,()=>{
-console.log("Server running on",PORT);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("Server running on", PORT);
 });
