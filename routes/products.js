@@ -3,47 +3,41 @@ const router = express.Router();
 const Product = require("../models/Product");
 
 const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("../config/cloudinary");
 
-const storage = multer.memoryStorage();
-const upload = multer({storage});
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "shopsphere_products",
+    allowed_formats: ["jpg","png","jpeg"]
+  }
+});
+
+const upload = multer({ storage });
 
 router.get("/", async(req,res)=>{
   const products = await Product.find();
   res.json(products);
 });
 
-router.post("/", upload.single("image"), async(req,res)=>{
+router.post("/", upload.single("image"), async (req,res)=>{
   try{
 
-    let imageUrl = "";
+    const product = new Product({
+      name: req.body.name,
+      price: req.body.price,
+      category: req.body.category,
+      stock: req.body.stock,
+      image: req.file.path
+    });
 
-    if(req.file){
-      const result = await cloudinary.uploader.upload_stream(
-        {folder:"shopsphere"},
-        async(error,result)=>{
+    await product.save();
 
-          if(error) return res.status(500).json(error);
-
-          imageUrl = result.secure_url;
-
-          const product = new Product({
-            name:req.body.name,
-            price:req.body.price,
-            category:req.body.category,
-            image:imageUrl
-          });
-
-          await product.save();
-
-          res.json(product);
-
-        }
-      ).end(req.file.buffer);
-    }
+    res.json(product);
 
   }catch(err){
-    res.status(500).json({error:err.message});
+    res.status(500).json({error: err.message});
   }
 });
 
