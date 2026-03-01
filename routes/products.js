@@ -17,12 +17,20 @@ router.get("/", async (req, res) => {
 // ADD product
 router.post("/", async (req,res)=>{
   try{
-    const product = new Product(req.body);
+
+    const {name, price, category, image} = req.body;
+
+    const product = new Product({
+      name,
+      price,
+      category,
+      image
+    });
+
     await product.save();
-   res.json({
-  message: "Product added",
-  product: product
-});
+
+    res.json(product);
+
   }catch(err){
     res.status(500).json({error: err.message});
   }
