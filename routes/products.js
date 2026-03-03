@@ -3,18 +3,10 @@ const router = express.Router();
 const Product = require("../models/Product");
 
 const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const multer = require("multer");
 const cloudinary = require("../config/cloudinary");
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "shopsphere_products",
-    allowed_formats: ["jpg","png","jpeg"]
-  }
-});
-
-const upload = multer({ storage });
+const upload = multer({ dest: "uploads/" });
 
 router.get("/", async (req, res) => {
   const products = await Product.find();
@@ -24,15 +16,16 @@ router.get("/", async (req, res) => {
 router.post("/", upload.single("image"), async (req, res) => {
   try {
 
-    console.log("BODY:", req.body);
-    console.log("FILE:", req.file);
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "products"
+    });
 
     const product = new Product({
       name: req.body.name,
       price: req.body.price,
       category: req.body.category,
       stock: req.body.stock || 0,
-      image: req.file?.path
+      image: result.secure_url
     });
 
     await product.save();
@@ -40,10 +33,10 @@ router.post("/", upload.single("image"), async (req, res) => {
     res.json(product);
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
-
 router.delete("/:id", async(req,res)=>{
   await Product.findByIdAndDelete(req.params.id);
   res.json({message:"Product deleted"});
