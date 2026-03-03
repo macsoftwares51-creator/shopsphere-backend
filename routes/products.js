@@ -21,23 +21,26 @@ router.get("/", async(req,res)=>{
   res.json(products);
 });
 
-router.post("/", upload.single("image"), async (req,res)=>{
-  try{
+router.post("/", upload.single("image"), async (req, res) => {
+  try {
+
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
 
     const product = new Product({
       name: req.body.name,
       price: req.body.price,
       category: req.body.category,
-      stock: req.body.stock,
-      image: req.file.path
+      stock: req.body.stock || 0,
+      image: req.file?.path
     });
 
     await product.save();
 
     res.json(product);
 
-  }catch(err){
-    res.status(500).json({error: err.message});
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
