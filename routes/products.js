@@ -16,7 +16,7 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-router.get("/", async(req,res)=>{
+router.get("/", async (req, res) => {
   const products = await Product.find();
   res.json(products);
 });
