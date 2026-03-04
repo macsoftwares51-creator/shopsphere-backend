@@ -9,7 +9,8 @@ const productRoutes = require("./routes/products");
 const adminRoutes = require("./routes/admin");
 
 const app = express();
-
+app.use(express.json());
+const ADMIN_PASSWORD = "Godisable";
 /* ---------- CONNECT DATABASE ---------- */
 connectDB();
 
@@ -30,7 +31,15 @@ app.use("/admin", adminRoutes);
 app.get("/", (req, res) => {
   res.send("ShopSphere API running");
 });
+app.post("/admin-login", (req, res) => {
+  const { password } = req.body;
 
+  if (password === ADMIN_PASSWORD) {
+    res.json({ success: true });
+  } else {
+    res.json({ success: false });
+  }
+});
 /* ---------- SERVER ---------- */
 const PORT = process.env.PORT || 10000;
 
