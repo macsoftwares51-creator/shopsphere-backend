@@ -5,6 +5,7 @@ const cors = require("cors");
 
 const connectDB = require("./config/database");
 const productRoutes = require("./routes/products");
+const requestRoutes = require("./routes/requests");
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
@@ -22,6 +23,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/requests", requestRoutes);
 
 /* ---------- ROUTES ---------- */
 
