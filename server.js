@@ -7,11 +7,19 @@ const connectDB = require("./config/database");
 
 const productRoutes = require("./routes/products");
 const adminRoutes = require("./routes/admin");
-
+const ADMIN_PASSWORD = "Godisable";
 const app = express();
 /* ---------- CONNECT DATABASE ---------- */
 connectDB();
+app.post("/admin-login", (req, res) => {
+  const { password } = req.body;
 
+  if (password === ADMIN_PASSWORD) {
+    res.json({ success: true });
+  } else {
+    res.json({ success: false });
+  }
+});
 /* ---------- MIDDLEWARE ---------- */
 app.use(cors({
   origin: "https://macsoftwares51-creator.github.io",
