@@ -6,7 +6,6 @@ const cors = require("cors");
 const connectDB = require("./config/database");
 
 const productRoutes = require("./routes/products");
-const adminRoutes = require("./routes/admin");
 const ADMIN_PASSWORD = "Godisable";
 const app = express();
 /* ---------- CONNECT DATABASE ---------- */
@@ -32,7 +31,6 @@ app.use(express.urlencoded({ extended: true }));
 
 /* ---------- ROUTES ---------- */
 app.use("/products", productRoutes);
-app.use("/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("ShopSphere API running");
