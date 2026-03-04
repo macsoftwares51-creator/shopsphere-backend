@@ -9,7 +9,6 @@ const productRoutes = require("./routes/products");
 const adminRoutes = require("./routes/admin");
 
 const app = express();
-app.use(express.json());
 /* ---------- CONNECT DATABASE ---------- */
 connectDB();
 
