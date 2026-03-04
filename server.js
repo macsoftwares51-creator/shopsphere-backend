@@ -6,7 +6,7 @@ const cors = require("cors");
 const connectDB = require("./config/database");
 
 const productRoutes = require("./routes/products");
-const ADMIN_PASSWORD = "Godisable";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const app = express();
 /* ---------- CONNECT DATABASE ---------- */
 connectDB();
