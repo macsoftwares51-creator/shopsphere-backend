@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Seller = require("../models/SellerRequest");
+
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("cloudinary").v2;
 
+/* CLOUDINARY STORAGE */
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -14,11 +16,27 @@ const storage = new CloudinaryStorage({
 });
 
 const upload = multer({ storage });
+
 /* APPLY TO SELL */
-router.post("/", async (req, res) => {
-  const newSeller = new Seller(req.body);
-  await newSeller.save();
-  res.json({ success: true });
+router.post("/", upload.single("image"), async (req, res) => {
+  try {
+    const newSeller = new Seller({
+      name: req.body.name,
+      email: req.body.email,
+      productName: req.body.productName,
+      price: req.body.price,
+      description: req.body.description,
+      image: req.file.path,
+      status: "Pending"
+    });
+
+    await newSeller.save();
+
+    res.json({ success: true });
+
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 /* GET ALL */
