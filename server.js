@@ -7,6 +7,7 @@ const connectDB = require("./config/database");
 const productRoutes = require("./routes/products");
 const requestRoutes = require("./routes/requests");
 const reviewRoutes = require("./routes/review");
+const sellerRoutes = require("./routes/SellerRequest");
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/requests", requestRoutes);
 app.use("/review", reviewRoutes);
+app.use("/SellerRequest", sellerRoutes);
 
 /* ---------- ROUTES ---------- */
 
