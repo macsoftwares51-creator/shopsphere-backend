@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/requests", requestRoutes);
 app.use("/review", reviewRoutes);
-app.use("/SellerRequest", sellerRoutes);
+app.use("/SellerRequest", SellerRequestRoutes);
 
 /* ---------- ROUTES ---------- */
 
