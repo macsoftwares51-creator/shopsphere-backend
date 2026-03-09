@@ -3,17 +3,8 @@ const router = express.Router();
 const Seller = require("../models/SellerRequest");
 
 const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("cloudinary").v2;
+const cloudinary = require("../config/cloudinary");
 
-/* CLOUDINARY STORAGE */
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "shopsphere-sellers",
-    allowed_formats: ["jpg", "png", "jpeg", "webp"]
-  }
-});
 
 const upload = multer({ storage });
 
