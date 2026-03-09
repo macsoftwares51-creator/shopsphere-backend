@@ -7,7 +7,7 @@ const connectDB = require("./config/database");
 const productRoutes = require("./routes/products");
 const requestRoutes = require("./routes/requests");
 const reviewRoutes = require("./routes/Review");
-const sellerRoutes = require("./routes/SellerRequest");
+const SellerRequestRoutes = require("./routes/SellerRequest");
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
