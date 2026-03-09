@@ -5,19 +5,23 @@ const Seller = require("../models/SellerRequest");
 const multer = require("multer");
 const cloudinary = require("../config/cloudinary");
 
-
-const upload = multer({ storage });
+const upload = multer({ dest: "uploads/" });
 
 /* APPLY TO SELL */
 router.post("/", upload.single("image"), async (req, res) => {
   try {
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "shopsphere-sellers"
+    });
+
     const newSeller = new Seller({
       name: req.body.name,
       email: req.body.email,
       productName: req.body.productName,
       price: req.body.price,
       description: req.body.description,
-      image: req.file.path,
+      image: result.secure_url,
       status: "Pending"
     });
 
@@ -26,7 +30,8 @@ router.post("/", upload.single("image"), async (req, res) => {
     res.json({ success: true });
 
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ error: "Upload failed" });
   }
 });
 
