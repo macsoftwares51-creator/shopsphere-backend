@@ -43,10 +43,20 @@ router.get("/", async (req, res) => {
 
 /* APPROVE */
 router.put("/:id", async (req, res) => {
-  await Seller.findByIdAndUpdate(req.params.id, { status: "Approved" });
+  await Seller.findByIdAndUpdate(req.params.id, { status: "approved" });
   res.json({ success: true });
 });
-
+/* GET ONLY APPROVED PRODUCTS FOR CUSTOMERS */
+router.get("/approved", async (req, res) => {
+  try {
+    // We look for "Approved" because that's what your PUT route saves
+    const approvedSellers = await Seller.find({ status: "Approved" }).sort({ createdAt: -1 });
+    res.json(approvedSellers);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch approved products" });
+  }
+});
 /* DELETE */
 router.delete("/:id", async (req, res) => {
   await Seller.findByIdAndDelete(req.params.id);
