@@ -50,7 +50,7 @@ router.put("/:id", async (req, res) => {
 router.get("/approved", async (req, res) => {
   try {
     // We look for "Approved" because that's what your PUT route saves
-    const approvedSellers = await Seller.find({ status: "Approved" }).sort({ createdAt: -1 });
+    const approvedSellers = await Seller.find({ status: "approved" }).sort({ createdAt: -1 });
     res.json(approvedSellers);
   } catch (err) {
     console.error(err);
