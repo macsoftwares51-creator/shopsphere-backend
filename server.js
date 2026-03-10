@@ -21,7 +21,6 @@ app.use(cors({
   origin: "https://macsoftwares51-creator.github.io",
   methods: ["GET","POST", "PATCH","PUT","DELETE"],
   credentials: true
-  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
