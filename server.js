@@ -28,6 +28,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/requests", requestRoutes);
 app.use("/Review", reviewRoutes);
 app.use("/SellerRequest", SellerRequestRoutes);
+// Serve the static HTML page
+app.use(express.static('public')); 
+
+// The API Route
+app.use('/api/proof', require('./routes/proof'));
 
 /* ---------- ROUTES ---------- */
 
