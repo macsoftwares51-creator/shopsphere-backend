@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const DeliveryProof = require('../models/DeliveryProof');
 
-router.post('/submit-proof', async (req, res) => {
+router.post('/proof', async (req, res) => {
     const { orderId, productImg, signatureImg } = req.body;
 
     // Custom Naming Logic
