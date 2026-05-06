@@ -17,11 +17,16 @@ const app = express();
 connectDB();
 
 /* ---------- MIDDLEWARE (MUST COME FIRST) ---------- */
-app.use(cors()); // This allows all origins and is much more reliable for testing
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(cors({
 
+  origin: "https://macsoftwares51-creator.github.io",
+
+  methods: ["GET","POST", "PATCH","PUT","DELETE"],
+
+  credentials: true
+
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use("/requests", requestRoutes);
