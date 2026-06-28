@@ -1,49 +1,41 @@
 const express = require('express');
 const router = express.Router();
-const cloudinary = require('cloudinary').v2; // Keep image data lightweight
+const cloudinary = require('cloudinary').v2;
 const DeliveryProof = require('../models/DeliveryProof');
 
-// Standard verification layer backup mapping
 router.post('/submit-proof', async (req, res) => {
-    const { orderId, productImg, signatureImg } = req.body;
+    const { orderId, productId, customerName, deliveryCode, signatureImg } = req.body;
 
-    if (!orderId || !productImg || !signatureImg) {
-        return res.status(400).json({ error: "Missing required tracking parameters." });
+    if (!orderId || !productId || !customerName || !deliveryCode || !signatureImg) {
+        return res.status(400).json({ error: "All validation parameters must be populated." });
     }
 
-    // Custom Named Asset Strings
     const date = new Date();
     const formattedDate = `${date.getDate()}_${date.toLocaleString('default', { month: 'long' })}_${date.getFullYear()}`;
-    const nameP = `${orderId}_${formattedDate}_p`;
-    const nameS = `${orderId}_${formattedDate}_s`;
+    const nameS = `${orderId}_${customerName.replace(/\s+/g, '_')}_${formattedDate}_s`;
 
     try {
-        // 1. Upload the high-res base64 item snapshot image to Cloudinary asset servers
-        const uploadedPhoto = await cloudinary.uploader.upload(productImg, {
-            folder: "shopsphere_proofs",
-            public_id: nameP
-        });
-
-        // 2. Upload the canvas electronic signature mapping
+        // Upload signature map image directly to Cloudinary
         const uploadedSignature = await cloudinary.uploader.upload(signatureImg, {
             folder: "shopsphere_signatures",
             public_id: nameS
         });
 
-        // 3. Save clean tracking URLs directly inside your cluster database document row maps
+        // Inject fields directly into your MongoDB cluster mapping schema document row
         const newProof = new DeliveryProof({
             orderId,
-            productPhoto: uploadedPhoto.secure_url, // Clean remote asset URL scheme
-            signature: uploadedSignature.secure_url, // Clean signature image map
-            fileNameP: nameP,
+            productId,
+            customerName,
+            deliveryCode,
+            signature: uploadedSignature.secure_url, // Stored securely as Cloudinary absolute URL link string
             fileNameS: nameS
         });
 
         await newProof.save();
-        res.status(200).json({ success: true, message: nameP });
+        res.status(200).json({ success: true, message: nameS });
     } catch (err) {
-        console.error("Cloudinary database storage failure trace:", err);
-        res.status(500).json({ error: "Storage node integration failed." });
+        console.error(err);
+        res.status(500).json({ error: "Database transaction mapping failure." });
     }
 });
 
