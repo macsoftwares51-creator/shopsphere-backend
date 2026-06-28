@@ -36,7 +36,7 @@ app.use("/SellerRequest", SellerRequestRoutes);
 app.use(express.static('public')); 
 
 // The API Route
-app.use('/api/proof', require('./routes/proof'));
+app.use('/proof', require('./routes/proof'));
 
 /* ---------- ROUTES ---------- */
 
