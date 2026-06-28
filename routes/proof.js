@@ -49,4 +49,19 @@ router.get('/all-proofs', async (req, res) => {
         res.status(500).json({ error: "Internal ledger processing error." });
     }
 });
+// DELETE Route to remove a specific delivery record by ID
+router.delete('/delete-proof/:id', async (req, res) => {
+    try {
+        const deletedProof = await DeliveryProof.findByIdAndDelete(req.params.id);
+        
+        if (!deletedProof) {
+            return res.status(404).json({ error: "Record not found inside database ledger." });
+        }
+        
+        res.status(200).json({ message: "Delivery proof deleted successfully." });
+    } catch (err) {
+        console.error("Failed to execute delete query on collection:", err);
+        res.status(500).json({ error: "Internal ledger processing error." });
+    }
+});
 module.exports = router;
