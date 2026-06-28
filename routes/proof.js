@@ -38,5 +38,15 @@ router.post('/submit-proof', async (req, res) => {
         res.status(500).json({ error: "Database transaction mapping failure." });
     }
 });
-
+// GET Route to return all proofs for tracking dashboard
+router.get('/all-proofs', async (req, res) => {
+    try {
+        // Fetch all documents from MongoDB and sort so newest are at the top
+        const allProofs = await DeliveryProof.find().sort({ createdAt: -1 });
+        res.status(200).json(allProofs);
+    } catch (err) {
+        console.error("Failed to query archive database collection:", err);
+        res.status(500).json({ error: "Internal ledger processing error." });
+    }
+});
 module.exports = router;
