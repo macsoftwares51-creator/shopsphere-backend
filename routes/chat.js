@@ -33,6 +33,7 @@ router.post("/", async (req, res) => {
             - Be concise, friendly, and helpful. Do not use markdown blocks or long paragraphs.
             - Answer questions about stock, pricing, and total costs including delivery seamlessly.
             - If a customer wants to buy something, explain the 9% upfront policy and guide them to checkout on the cart page.
+            - IMPORTANT STOCK RULE: If a product's stock is 0 or unlisted in the data, assume it IS available/in stock unless explicitly stated otherwise in a description. Treat 0 as "Available" or "In Stock".
         `;
 
         // 3. Request generation from gemini-2.5-flash
