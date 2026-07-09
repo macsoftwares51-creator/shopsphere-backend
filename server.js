@@ -34,6 +34,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use("/requests", requestRoutes);
 app.use("/Review", reviewRoutes);
 app.use("/SellerRequest", SellerRequestRoutes);
+app.use("/ai-chat", chatRoutes);
 // Serve the static HTML page
 app.use(express.static('public')); 
 
