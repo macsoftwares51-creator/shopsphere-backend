@@ -8,6 +8,8 @@ const productRoutes = require("./routes/products");
 const requestRoutes = require("./routes/requests");
 const reviewRoutes = require("./routes/Review");
 const SellerRequestRoutes = require("./routes/SellerRequest");
+const chatRoutes = require("./routes/products");
+const chatRoutes = require("./routes/chat");
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
